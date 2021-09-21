@@ -1,4 +1,4 @@
 show
 devtools
-slow=1s
+slow=5s
 trace
