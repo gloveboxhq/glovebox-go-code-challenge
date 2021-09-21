@@ -7,7 +7,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/cosmotek/carrierproxy-poc/providers"
+	"github.com/cosmotek/carrierproxy-poc/provider"
+
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/proto"
 )
@@ -29,24 +30,43 @@ var (
 	ErrLoginNoAccountFound    = errors.New("failed to login, no account found with provided email")
 	ErrLoginUnknownReason     = errors.New("failed to login, reason unknown")
 	ErrFailureUnknownReason   = errors.New("failure due to unknown reason")
+	ErrNotImplemented         = errors.New("method not implemented")
 )
 
+// LoginStatus is a type used to indicate login status within the context of this provider
 type LoginStatus string
 
+// NetflixPolicyProvider implements the provider.PolicyProvider interface
 type NetflixPolicyProvider struct {
 	browser *rod.Browser
 }
 
-func NewProvider() NetflixPolicyProvider {
+// NewProvider creates a new provider instance by connecting
+// to the automation browser and returning a provider with an
+// active browser connection.
+func NewProvider() (NetflixPolicyProvider, error) {
+	browser := rod.New()
+	err := browser.Connect()
+	if err != nil {
+		return NetflixPolicyProvider{}, err
+	}
+
 	return NetflixPolicyProvider{
-		browser: rod.New().MustConnect(),
+		browser: browser,
+	}, nil
+}
+
+// NewProviderFromBrowser creates and returns a new provider instance
+// using the provided browser. This may be useful for tests where custom
+// browser parameters may be required for debugging.
+func NewProviderFromBrowser(browser *rod.Browser) NetflixPolicyProvider {
+	return NetflixPolicyProvider{
+		browser: browser,
 	}
 }
 
-func (n NetflixPolicyProvider) ProviderName() string {
-	return "NETFLIX"
-}
-
+// GetLoginStatus attempts to determine the login status for the provider using the given
+// username.
 func (n NetflixPolicyProvider) GetLoginStatus(username string) (LoginStatus, error) {
 	// load account page
 	page, err := n.browser.Page(proto.TargetCreateTarget{URL: netflixAccountPageUrl})
@@ -123,6 +143,7 @@ func (n NetflixPolicyProvider) Login(username, password string) error {
 	if info.URL != authWallUrlWithRedirect {
 		log.Println("screenshoting page for later debugging")
 		page.MustScreenshotFullPage(fmt.Sprintf("netflix_login_failure_%s.png", time.Now().String()))
+		time.Sleep(time.Second * 3)
 
 		return ErrLoginUnknownReason
 	}
@@ -210,6 +231,7 @@ func (n NetflixPolicyProvider) Login(username, password string) error {
 
 		log.Println("screenshoting page for later debugging")
 		page.MustScreenshotFullPage(fmt.Sprintf("netflix_login_failure_%s.png", time.Now().String()))
+		time.Sleep(time.Second * 3)
 
 		return ErrLoginUnknownReason
 	}
@@ -230,6 +252,7 @@ func (n NetflixPolicyProvider) Login(username, password string) error {
 	if !exists || text != username {
 		log.Println("screenshoting page for later debugging")
 		page.MustScreenshotFullPage(fmt.Sprintf("netflix_login_failure_%s.png", time.Now().String()))
+		time.Sleep(time.Second * 3)
 
 		return ErrLoginUnknownReason
 	}
@@ -237,14 +260,15 @@ func (n NetflixPolicyProvider) Login(username, password string) error {
 	return nil
 }
 
-func (n NetflixPolicyProvider) Policies() ([]providers.Policy, error) {
-	return nil, nil
+func (n NetflixPolicyProvider) Policies() ([]provider.Policy, error) {
+	return nil, ErrNotImplemented
 }
 
 func (n NetflixPolicyProvider) DocumentDownload(downloadKey string) (io.ReadCloser, error) {
-	return nil, nil
+	return nil, ErrNotImplemented
 }
 
+// Close releases use of the browser instance
 func (n NetflixPolicyProvider) Close() error {
 	return n.browser.Close()
 }

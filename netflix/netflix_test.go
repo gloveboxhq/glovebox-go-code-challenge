@@ -4,23 +4,38 @@ import (
 	"testing"
 
 	"github.com/cosmotek/carrierproxy-poc/config"
-	"github.com/cosmotek/carrierproxy-poc/providers"
+	"github.com/cosmotek/carrierproxy-poc/provider"
+	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
-func TestLogin(rootTest testing.T) {
+func createVisibleBrowser() *rod.Browser {
+	browserStartOpts := launcher.New().
+		Headless(false).
+		Devtools(false)
+
+	return rod.New().
+		ControlURL(browserStartOpts.MustLaunch()).
+		Trace(true).
+		MustConnect()
+}
+
+func TestLogin(rootTest *testing.T) {
 	type loginTest struct {
 		InputUsername, InputPassword string
 		ExpectedError                error
 
 		// optional provider instance. if nil, a new instance will be created
-		Provider providers.PolicyProvider
+		Provider provider.PolicyProvider
 	}
 
 	// fetch config from env
 	conf := config.Get()
+
+	// setup rod to run with headless mode disabled
 
 	// since all providers implement the same interface, all providers
 	// can share the same table-tests for their interface methods.
@@ -30,20 +45,31 @@ func TestLogin(rootTest testing.T) {
 			InputPassword: conf.NetflixPassword,
 			ExpectedError: nil,
 		},
+		"bad username": {
+			InputUsername: conf.NetflixUsername[:len(conf.NetflixUsername)-1], // trim one char
+			InputPassword: conf.NetflixPassword,
+			ExpectedError: ErrLoginNoAccountFound,
+		},
+		"bad password": {
+			InputUsername: conf.NetflixUsername,
+			InputPassword: conf.NetflixPassword[:len(conf.NetflixPassword)-1], // trim one char
+			ExpectedError: ErrLoginIncorrectPassword,
+		},
 	}
 
 	// range tests and exec as subtest (by test name)
 	for testName, testParams := range tests {
 		rootTest.Run(testName, func(test *testing.T) {
 			// if provider wasn't supplied (is nil), create new instance
-			var provider providers.PolicyProvider = testParams.Provider
+			var provider provider.PolicyProvider = testParams.Provider
 			if provider == nil {
-				provider = NewProvider()
+				provider = NewProviderFromBrowser(createVisibleBrowser())
+				defer provider.Close()
 			}
 
 			// exec login method
-			err := provider.Login(testParams.InputPassword, testParams.InputUsername)
-			if cmp.Equal(err, testParams.ExpectedError, cmpopts.EquateErrors()) {
+			err := provider.Login(testParams.InputUsername, testParams.InputPassword)
+			if !cmp.Equal(err, testParams.ExpectedError, cmpopts.EquateErrors()) {
 				test.Errorf("expected '%v' but got '%v'", testParams.ExpectedError, err)
 				test.Fail()
 			}
