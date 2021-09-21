@@ -1,4 +1,4 @@
-package main
+package provider
 
 type Policy struct {
 	CarrierID    string
