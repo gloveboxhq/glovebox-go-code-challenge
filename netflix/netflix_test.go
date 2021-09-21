@@ -35,10 +35,8 @@ func TestLogin(rootTest *testing.T) {
 	// fetch config from env
 	conf := config.Get()
 
-	// setup rod to run with headless mode disabled
-
-	// since all providers implement the same interface, all providers
-	// can share the same table-tests for their interface methods.
+	// create a simple table for tests with test name
+	// as map key and params as map value
 	tests := map[string]loginTest{
 		"happy path": {
 			InputUsername: conf.NetflixUsername,
