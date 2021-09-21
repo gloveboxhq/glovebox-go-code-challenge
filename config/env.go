@@ -2,6 +2,7 @@ package config
 
 import "github.com/kelseyhightower/envconfig"
 
+// config singleton, populated from environment by init function
 var config Config
 
 func init() {
@@ -18,6 +19,7 @@ type Config struct {
 	NetflixPassword string `split_words:"true" required:"true"`
 }
 
+// Get returns a copy of the config singleton
 func Get() Config {
 	return config
 }
