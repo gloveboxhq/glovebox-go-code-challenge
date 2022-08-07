@@ -1,9 +1,7 @@
 package main
 
 import (
-	"errors"
 	"io"
-	"os"
 )
 
 type GitHubProvider struct {
