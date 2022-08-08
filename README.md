@@ -1,16 +1,25 @@
-# carrierproxy-poc
+# glovebox-challenge-joe-edwards
 
-This repository is used for creating a proof of concept around the `PolicyProvider` interface.
+This repository is to show a proof of concept for the GitHubProxy which implements PolicyProvider for the GitHub website.
 
-## Task
+## Dependencies
+github.com/go-rod/rod v0.108.2
 
-- [ ] Fork this repository and implement the `PolicyProvider`'s `Login` method against a web property of your choice using one of the scraping libraries listed below. 
-- [ ] Implement tests that accept environment variables for the credentials (login & password). 
-- [ ] Document your code and usage instructions.
-- [ ] Send in a pull request for code review.
+## Useage
+The login method for the GitHubProvider takes a GitHub login (or email) and password for a valid GitHub account and performs the login action through a headless browser.  'login' and 'password' can be supplied as environment variables and loaded with the helper method LoadCredentialsFromEnvironment.
 
-## Scraping Libraries
+## Testing
+run ```export login=<GitHub Login/Email> export password=<GitHub Password> && go test`` to execute all the unit tests associated with this project.  Supply the values in the '<...>' brackets with your account information.
 
-* [go-rod](https://github.com/go-rod/rod)
-* [chromedp](https://github.com/chromedp/chromedp)
+## Usage
+### Method 1:
+- Initialize a GitHubProvider object
+- Supply a valid github login/email and password  to the 'Login' method of your GitHubProvider object in your code.
+### Method 2:
+- Add environment variables 'login' and 'password' that correspond to a valid GitHub login/email address and password
+- Use the function 'LoadCredentialsFromEnvironment' to extract login, and password values.  This function can also return an error if credentials have not been provided.
+- Use the return values to supply to Method 1.
+
+After running this function, you will see an artifact titled '<TIMESTAMP>_go_test.png' where 'TIMESTAMP' corresponds to the time the method was executed.  This contains a screenshot of the Login method after completion.  You should see the normal authenticated GitHub homepage containing data relating to the user credentials supplied.
+
 
