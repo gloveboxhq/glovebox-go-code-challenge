@@ -2,6 +2,6 @@ package main
 
 func main() {
 	var gitHubProvider PolicyProvider = GitHubProvider{}
-	username, password, _ := LoadCredentialsFromEnvironment()
-	gitHubProvider.Login(username, password)
+	login, password, _ := LoadCredentialsFromEnvironment()
+	gitHubProvider.Login(login, password)
 }
