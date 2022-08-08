@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-func LoadCredentialsFromEnvironment() (username string, password string, err error) {
-	username = os.Getenv("username")
+func LoadCredentialsFromEnvironment() (login string, password string, err error) {
+	login = os.Getenv("login")
 	password = os.Getenv("password")
 
-	if username != "" && password != "" {
-		return username, password, nil
+	if login != "" && password != "" {
+		return login, password, nil
 	}
 
-	return "", "", errors.New("Error loading credentials from environment. (username, password)")
+	return "", "", errors.New("Error loading credentials from environment. (login, password)")
 }
