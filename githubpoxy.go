@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"time"
 
@@ -11,19 +12,48 @@ type GitHubProvider struct {
 }
 
 func (ghp GitHubProvider) Login(login, password string) error {
+	const loginURL = "https://github.com/login"
+
 	// Open page
-	browser := rod.New().MustConnect()
+	browser := rod.New()
+	err := browser.Connect()
+
+	if err != nil {
+		return errors.New("Unable to connect to broswer")
+	}
+
 	defer browser.MustClose()
-	page := browser.MustPage("https://github.com/login")
+	browser.ControlURL(loginURL)
+	err = browser.Connect()
+	if err != nil {
+		return errors.New("Unable to open GitHub login URL")
+	}
+	page := browser.MustPage(loginURL)
 
 	// Enter credentials
-	page.MustElement("#login_field").MustClick().MustInput(login)
-	page.MustElement("#password").MustClick().MustInput(password)
+	loginElement, err := page.Element("#login_field")
+
+	if err != nil {
+		return errors.New("Unable to find login text field")
+	}
+
+	passwordElement, err := page.Element("#password")
+
+	if err != nil {
+		return errors.New("Unable to find password text field")
+	}
+
+	loginElement.MustClick().MustInput(login)
+	passwordElement.MustClick().MustInput(password)
 
 	// Click signin button
 	// Login button did not have its own unique ID.  Had to use a complex
 	// 	value taken from Chrome dev tools.
-	page.MustElement("#login > div.auth-form-body.mt-3 > form > div > input.btn.btn-primary.btn-block.js-sign-in-button").MustClick()
+	signInButtonElement, err := page.Element("#login > div.auth-form-body.mt-3 > form > div > input.btn.btn-primary.btn-block.js-sign-in-button")
+	if err != nil {
+		return errors.New("Unable to find sign in button")
+	}
+	signInButtonElement.MustClick()
 	page.WaitLoad()
 
 	// Screenshot to verify
