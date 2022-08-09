@@ -16,6 +16,16 @@ This repository is used for creating a proof of concept around the `PolicyProvid
 
 ## Usage
 
-The yproxy struct is used for logging in and scraping data from ycombinator (web property of choice)
+The `yproxy` struct is used for logging in and scraping data from ycombinator (web property of choice)
+`yproxy` object must be created, then the `Login` called with username and password passed to it
+
+Example in main.go:
+
+	username := os.Getenv("GLOVEBOX_USER")
+	password := os.Getenv("GLOVEBOX_PASS")
+
+	yproxy := yproxy{}
+	err := yproxy.Login(username, password)
+
 
 
