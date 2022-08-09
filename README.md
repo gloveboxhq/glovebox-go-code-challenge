@@ -14,3 +14,8 @@ This repository is used for creating a proof of concept around the `PolicyProvid
 * [go-rod](https://github.com/go-rod/rod)
 * [chromedp](https://github.com/chromedp/chromedp)
 
+## Usage
+
+The yproxy struct is used for logging in and scraping data from ycombinator (web property of choice)
+
+
