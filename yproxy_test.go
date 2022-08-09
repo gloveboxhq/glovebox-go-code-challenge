@@ -20,7 +20,7 @@ func TestHappyPath(t *testing.T) {
 	page := yproxy.browser.MustPage("https://news.ycombinator.com/newest")
 	el := page.MustElement("#me")
 
-	if el.MustText() != "rcountry21" {
+	if el.MustText() != username {
 		t.Errorf("Cannot find correct user after login.")
 	}
 }
