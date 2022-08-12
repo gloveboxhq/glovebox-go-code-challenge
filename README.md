@@ -14,3 +14,28 @@ This repository is used for creating a proof of concept around the `PolicyProvid
 * [go-rod](https://github.com/go-rod/rod)
 * [chromedp](https://github.com/chromedp/chromedp)
 
+## Instructions to run the project.
+
+### Run the project with:
+#### This will execute a function that will scrape from `https://pkg.go.dev/time` after clicking the button `#example-After`
+```
+go run main.go
+```
+
+#### Example URL: `https://pkg.go.dev/time`
+#### Example clickBtnId: `#example-After`
+#### Example retrievingElement: `textarea`
+
+## Run test cases. First move to the relevant directory.
+```
+cd controller
+```
+
+
+### There are two test cases:
+- Test Scraping function
+
+- Test Environment variables
+```
+go test -v
+```
