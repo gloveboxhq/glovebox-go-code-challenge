@@ -1,11 +1,11 @@
 # carrierproxy-poc
 
-This repository is used for creating a proof of concept around the `PolicyProvider` interface using facebook.
+This repository is used for creating a proof of concept around the `PolicyProvider` interface.
 
 # About the project
 Go-rod scraping library is used.
 
-Login method is done using PolicyProvider interface in facebook.The process of login method is given below:
+Login method from PolicyProvider interface has been implemented for facebook login. The process of login method is given below:
 
 1) Create .env file and give appropriate username, password and showbrowser as given in .env_example file as shown below.
 
