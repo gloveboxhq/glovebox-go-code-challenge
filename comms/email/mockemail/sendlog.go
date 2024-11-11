@@ -8,12 +8,17 @@ import (
 
 type SendLog struct {
 	to      string
+	cc      []string
 	tplID   email.TplID
 	message json.RawMessage
 }
 
 func (sl *SendLog) ExtractTo() string {
 	return sl.to
+}
+
+func (sl *SendLog) ExtractCC() []string {
+	return sl.cc
 }
 
 func (sl *SendLog) ExtractTplID() email.TplID {

@@ -34,6 +34,7 @@ func main() {
 	// setup the api routes
 	http.HandleFunc("/api/comms/add-policy-vehicle", handlers.AddPolicyVehicle(emailsvc))
 	http.HandleFunc("/api/comms/add-policy-driver", handlers.AddPolicyDriver(emailsvc))
+	http.HandleFunc("/api/comms/add-policy-coverage", handlers.AddPolicyCoverage(emailsvc))
 	http.HandleFunc("/api/comms/add-policy-address", handlers.AddPolicyAddress(emailsvc))
 
 	// start the api server

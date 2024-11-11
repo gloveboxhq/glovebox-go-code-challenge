@@ -23,7 +23,7 @@ func AddPolicyVehicle(emailsvc email.MailProvider) http.HandlerFunc {
 			return
 		}
 
-		if err := emailsvc.Send([]string{payload.EmailTo}, payload.Message, email.TplAddPolicyVehicle); err != nil {
+		if err := emailsvc.Send([]string{payload.EmailTo}, []string{}, payload.Message, email.TplAddPolicyVehicle); err != nil {
 			http.Error(w, fmt.Sprintf("error sending email: %v", err), http.StatusInternalServerError)
 			return
 		}
@@ -44,7 +44,28 @@ func AddPolicyDriver(emailsvc email.MailProvider) http.HandlerFunc {
 			return
 		}
 
-		if err := emailsvc.Send([]string{payload.EmailTo}, payload.Message, email.TplAddPolicyDriver); err != nil {
+		if err := emailsvc.Send([]string{payload.EmailTo}, []string{}, payload.Message, email.TplAddPolicyDriver); err != nil {
+			http.Error(w, fmt.Sprintf("error sending email: %v", err), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func AddPolicyCoverage(emailsvc email.MailProvider) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		if r.Method != http.MethodPost {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		}
+
+		payload := AddPolicyCoverageReq{}
+
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "invalid payload", http.StatusBadRequest)
+			return
+		}
+
+		if err := emailsvc.Send([]string{payload.EmailTo}, []string{payload.EmailCC}, payload.Message, email.TplAddPolicyCoverage); err != nil {
 			http.Error(w, fmt.Sprintf("error sending email: %v", err), http.StatusInternalServerError)
 			return
 		}
@@ -65,7 +86,7 @@ func AddPolicyAddress(emailsvc email.MailProvider) http.HandlerFunc {
 			return
 		}
 
-		if err := emailsvc.Send([]string{payload.EmailTo}, payload.Message, email.TplAddPolicyAddress); err != nil {
+		if err := emailsvc.Send([]string{payload.EmailTo}, []string{}, payload.Message, email.TplAddPolicyAddress); err != nil {
 			http.Error(w, fmt.Sprintf("error sending email: %v", err), http.StatusInternalServerError)
 			return
 		}
