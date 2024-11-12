@@ -65,7 +65,7 @@ func AddPolicyCoverage(emailsvc email.MailProvider) http.HandlerFunc {
 			return
 		}
 
-		if err := emailsvc.Send([]string{payload.EmailTo}, []string{payload.EmailCC}, payload.Message, email.TplAddPolicyCoverage); err != nil {
+		if err := emailsvc.Send(payload.EmailTo, payload.EmailCC, payload.Message, email.TplAddPolicyCoverage); err != nil {
 			http.Error(w, fmt.Sprintf("error sending email: %v", err), http.StatusInternalServerError)
 			return
 		}

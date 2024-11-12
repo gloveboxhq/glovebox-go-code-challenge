@@ -16,16 +16,13 @@ func NewClient() *Client {
 	}
 }
 
-func (c *Client) Send(to []string, cc []string, message json.RawMessage, tplID email.TplID) error {
-
-	for _, v := range to {
-		c.sendLogs = append(c.sendLogs, SendLog{
-			to:      v,
-			cc:      cc,
-			message: message,
-			tplID:   tplID,
-		})
-	}
+func (c *Client) Send(tos []string, ccs []string, message json.RawMessage, tplID email.TplID) error {
+	c.sendLogs = append(c.sendLogs, SendLog{
+		tos:     tos,
+		ccs:     ccs,
+		message: message,
+		tplID:   tplID,
+	})
 
 	return nil
 }

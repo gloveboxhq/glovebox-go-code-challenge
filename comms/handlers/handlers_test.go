@@ -70,8 +70,19 @@ func TestAddPolicyVehicle(t *testing.T) {
 
 				lastEmail := testEmail.SendLogs().Last()
 
-				if lastEmail.ExtractTo() != tc.payload.EmailTo {
-					t.Fatalf("expected to %v but got %v", tc.payload.EmailTo, lastEmail.ExtractTo())
+				tos := lastEmail.ExtractTos()
+				expectedTos := []string{tc.payload.EmailTo}
+
+				if len(tos) != len(expectedTos) {
+					t.Fatalf("mismatched to lengths, expected %v but got %v", expectedTos, tos)
+				}
+
+				for i := range tos {
+					to := tos[i]
+					expectedTo := string(expectedTos[i])
+					if to != expectedTo {
+						t.Fatalf("expected to %v but got %v", expectedTo, to)
+					}
 				}
 
 				if string(lastEmail.ExtractMessage()) != string(tc.payload.Message) {
@@ -148,8 +159,19 @@ func TestAddPolicyDriver(t *testing.T) {
 
 				lastEmail := testEmail.SendLogs().Last()
 
-				if lastEmail.ExtractTo() != tc.payload.EmailTo {
-					t.Fatalf("expected to %v but got %v", tc.payload.EmailTo, lastEmail.ExtractTo())
+				tos := lastEmail.ExtractTos()
+				expectedTos := []string{tc.payload.EmailTo}
+
+				if len(tos) != len(expectedTos) {
+					t.Fatalf("mismatched to lengths, expected %v but got %v", expectedTos, tos)
+				}
+
+				for i := range tos {
+					to := tos[i]
+					expectedTo := string(expectedTos[i])
+					if to != expectedTo {
+						t.Fatalf("expected to %v but got %v", expectedTo, to)
+					}
 				}
 
 				if string(lastEmail.ExtractMessage()) != string(tc.payload.Message) {
@@ -183,8 +205,48 @@ func TestAddPolicyCoverage(t *testing.T) {
 		"pass": {
 			method: http.MethodPost,
 			payload: handlers.AddPolicyCoverageReq{
-				EmailTo: "foo@bar.com",
-				EmailCC: "baz@bar.com",
+				EmailTo: []string{"foo@bar.com"},
+				EmailCC: []string{"baz@bar.com"},
+				Message: json.RawMessage(`{"foo":"bar"}`),
+			},
+			expectTplID:  email.TplAddPolicyCoverage,
+			expectStatus: http.StatusOK,
+		},
+		"pass 2 to": {
+			method: http.MethodPost,
+			payload: handlers.AddPolicyCoverageReq{
+				EmailTo: []string{"foo@bar.com", "foo@baz.com"},
+				EmailCC: []string{"baz@bar.com"},
+				Message: json.RawMessage(`{"foo":"bar"}`),
+			},
+			expectTplID:  email.TplAddPolicyCoverage,
+			expectStatus: http.StatusOK,
+		},
+		"pass 2 cc": {
+			method: http.MethodPost,
+			payload: handlers.AddPolicyCoverageReq{
+				EmailTo: []string{"baz@bar.com"},
+				EmailCC: []string{"foo@bar.com", "foo@baz.com"},
+				Message: json.RawMessage(`{"foo":"bar"}`),
+			},
+			expectTplID:  email.TplAddPolicyCoverage,
+			expectStatus: http.StatusOK,
+		},
+		"pass 2 to and 2 cc": {
+			method: http.MethodPost,
+			payload: handlers.AddPolicyCoverageReq{
+				EmailTo: []string{"baz@bar.com", "fizz@buzz.com"},
+				EmailCC: []string{"foo@bar.com", "foo@baz.com"},
+				Message: json.RawMessage(`{"foo":"bar"}`),
+			},
+			expectTplID:  email.TplAddPolicyCoverage,
+			expectStatus: http.StatusOK,
+		},
+		"pass many": {
+			method: http.MethodPost,
+			payload: handlers.AddPolicyCoverageReq{
+				EmailTo: []string{"baz@bar.com", "fizz@buzz.com", "beep@boop.com"},
+				EmailCC: []string{"foo@bar.com", "foo@baz.com", "zig@zag.com"},
 				Message: json.RawMessage(`{"foo":"bar"}`),
 			},
 			expectTplID:  email.TplAddPolicyCoverage,
@@ -227,20 +289,40 @@ func TestAddPolicyCoverage(t *testing.T) {
 
 				lastEmail := testEmail.SendLogs().Last()
 
-				if lastEmail.ExtractTo() != tc.payload.EmailTo {
-					t.Fatalf("expected to %v but got %v", tc.payload.EmailTo, lastEmail.ExtractTo())
+				{
+					// Check all Tos
+					tos := lastEmail.ExtractTos()
+					expectedTos := tc.payload.EmailTo
+
+					if len(tos) != len(expectedTos) {
+						t.Fatalf("mismatched to lengths, expected %v but got %v", expectedTos, tos)
+					}
+
+					for i := range tos {
+						to := tos[i]
+						expectedTo := string(expectedTos[i])
+						if to != expectedTo {
+							t.Fatalf("expected to %v but got %v", expectedTo, to)
+						}
+					}
 				}
 
-				lastCC := lastEmail.ExtractCC()
+				{
+					// Check all CCs
+					ccs := lastEmail.ExtractCCs()
+					expectedCCs := tc.payload.EmailCC
 
-				if len(lastCC) != 1 {
-					t.Fatalf("expected cc %v, none found", tc.payload.EmailCC)
-				}
+					if len(ccs) != len(expectedCCs) {
+						t.Fatalf("mismatched cc lengths, expected %v but got %v", expectedCCs, ccs)
+					}
 
-				cc := lastCC[0]
-
-				if cc != tc.payload.EmailCC {
-					t.Fatalf("expected cc %v but got %v", tc.payload.EmailCC, cc)
+					for i := range ccs {
+						cc := ccs[i]
+						expectedCC := string(expectedCCs[i])
+						if cc != expectedCC {
+							t.Fatalf("expected cc %v but got %v", expectedCC, cc)
+						}
+					}
 				}
 
 				if string(lastEmail.ExtractMessage()) != string(tc.payload.Message) {
@@ -317,8 +399,19 @@ func TestAddPolicyAddress(t *testing.T) {
 
 				lastEmail := testEmail.SendLogs().Last()
 
-				if lastEmail.ExtractTo() != tc.payload.EmailTo {
-					t.Fatalf("expected to %v but got %v", tc.payload.EmailTo, lastEmail.ExtractTo())
+				tos := lastEmail.ExtractTos()
+				expectedTos := []string{tc.payload.EmailTo}
+
+				if len(tos) != len(expectedTos) {
+					t.Fatalf("mismatched to lengths, expected %v but got %v", expectedTos, tos)
+				}
+
+				for i := range tos {
+					to := tos[i]
+					expectedTo := string(expectedTos[i])
+					if to != expectedTo {
+						t.Fatalf("expected to %v but got %v", expectedTo, to)
+					}
 				}
 
 				if string(lastEmail.ExtractMessage()) != string(tc.payload.Message) {

@@ -7,18 +7,18 @@ import (
 )
 
 type SendLog struct {
-	to      string
-	cc      []string
+	tos     []string
+	ccs     []string
 	tplID   email.TplID
 	message json.RawMessage
 }
 
-func (sl *SendLog) ExtractTo() string {
-	return sl.to
+func (sl *SendLog) ExtractTos() []string {
+	return sl.tos
 }
 
-func (sl *SendLog) ExtractCC() []string {
-	return sl.cc
+func (sl *SendLog) ExtractCCs() []string {
+	return sl.ccs
 }
 
 func (sl *SendLog) ExtractTplID() email.TplID {

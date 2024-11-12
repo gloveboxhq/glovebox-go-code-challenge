@@ -15,8 +15,8 @@ type AddPolicyDriverReq struct {
 }
 
 type AddPolicyCoverageReq struct {
-	EmailTo string          `json:"email_to"`
-	EmailCC string          `json:"email_cc"`
+	EmailTo []string        `json:"email_to"`
+	EmailCC []string        `json:"email_cc"`
 	Message json.RawMessage `json:"message"`
 }
 

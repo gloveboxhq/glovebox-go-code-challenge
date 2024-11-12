@@ -30,12 +30,12 @@ type Client struct {
 	fromName    string
 }
 
-func (c *Client) Send(to []string, cc []string, message json.RawMessage, tpl email.TplID) error {
+func (c *Client) Send(tos []string, ccs []string, message json.RawMessage, tpl email.TplID) error {
 
 	// create personalization
 	p := mail.NewPersonalization().
-		AddTos(to...).
-		AddCCs(cc...)
+		AddTos(tos...).
+		AddCCs(ccs...)
 
 	// create the email
 	m := mail.NewV3Mail().

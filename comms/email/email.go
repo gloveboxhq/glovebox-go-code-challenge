@@ -12,5 +12,5 @@ const (
 )
 
 type MailProvider interface {
-	Send(to []string, cc []string, message json.RawMessage, tpl TplID) error
+	Send(tos []string, ccs []string, message json.RawMessage, tpl TplID) error
 }
