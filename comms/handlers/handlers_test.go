@@ -212,6 +212,29 @@ func TestAddPolicyCoverage(t *testing.T) {
 			expectTplID:  email.TplAddPolicyCoverage,
 			expectStatus: http.StatusOK,
 		},
+		// NOTE: this passes in this faked sendgrid scenario, but I imagine sengrid
+		// would error if passed no tos and we'd either have to handle the error or
+		// catch empty tos at the route handler level
+		"pass empty to": {
+			method: http.MethodPost,
+			payload: handlers.AddPolicyCoverageReq{
+				EmailTo: []string{},
+				EmailCC: []string{"baz@bar.com"},
+				Message: json.RawMessage(`{"foo":"bar"}`),
+			},
+			expectTplID:  email.TplAddPolicyCoverage,
+			expectStatus: http.StatusOK,
+		},
+		"pass empty cc": {
+			method: http.MethodPost,
+			payload: handlers.AddPolicyCoverageReq{
+				EmailTo: []string{"foo@bar.com"},
+				EmailCC: []string{},
+				Message: json.RawMessage(`{"foo":"bar"}`),
+			},
+			expectTplID:  email.TplAddPolicyCoverage,
+			expectStatus: http.StatusOK,
+		},
 		"pass 2 to": {
 			method: http.MethodPost,
 			payload: handlers.AddPolicyCoverageReq{
