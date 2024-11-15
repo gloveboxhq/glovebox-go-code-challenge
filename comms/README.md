@@ -12,6 +12,6 @@ The comms api needs to support a new operation for adding policy coverage. The n
 
 **Instructions:** 
 
-* [ ] Create a handler for the new comms operation and implement the correct business logic inside of the handler.
-* [ ] Make whatever improvements are needed to support the new email `CC` field.
-* [ ] Create a unit test for the new handler to prove it meets business requirements.
+* [x] Create a handler for the new comms operation and implement the correct business logic inside of the handler.
+* [x] Make whatever improvements are needed to support the new email `CC` field.
+* [x] Create a unit test for the new handler to prove it meets business requirements.
