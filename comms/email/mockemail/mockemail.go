@@ -2,6 +2,7 @@ package mockemail
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/gloveboxhq/glovebox-go-code-challenge/comms/email"
 )
@@ -16,11 +17,12 @@ func NewClient() *Client {
 	}
 }
 
-func (c *Client) Send(to []string, message json.RawMessage, tplID email.TplID) error {
+func (c *Client) Send(to []string, cc []string, message json.RawMessage, tplID email.TplID) error {
 
 	for _, v := range to {
 		c.sendLogs = append(c.sendLogs, SendLog{
 			to:      v,
+			cc:      strings.Join(cc, ","),
 			message: message,
 			tplID:   tplID,
 		})
